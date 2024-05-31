@@ -1,0 +1,166 @@
+@use 'sass:map';
+@use 'sass:list';
+
+@import 'https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:wght@300..700&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap';
+
+$color-blue: #5ea3ec;
+$color-red: #f64444;
+$color-yellow: #ffb400;
+$color-white: #fff;
+$color-black: #000;
+$column-close-w: 3.75rem;
+$column-num: 4;
+$grid-duration: 300ms;
+$sticky-on-duration: 150ms;
+$sticky-off-duration: 300ms;
+$content-on-duration: 250ms;
+$content-off-duration: 150ms;
+$grid-delay: max($content-off-duration, $sticky-on-duration) + 300ms;
+$sticky-off-delay: $content-off-duration + $grid-duration + 300ms;
+$content-on-delay: $grid-duration + $grid-delay;
+$font-sans: ('Spline Sans Mono', monospace);
+$font-serif: ('Playfair Display', serif);
+$sticky-1-p-x: 3.75rem;
+$sticky-p-x: 0.3125rem;
+$sticky-p-y: 3.75rem;
+$section-p: 3.75rem;
+$section-gap: 3.75rem;
+
+$col-blue: #5ea3ec;
+$col-red: #f64444;
+$col-yellow: #ffb400;
+$col-white: #fff;
+$col-black: #000;
+$column-close-w: 3.75rem;
+
+.grid {
+  display: grid;
+  //   grid-template-columns: 1fr 3.75rem 3.75rem 3.75rem;
+  min-height: 100vh;
+  transition: all 300ms ease-in 50ms;
+
+  &[data-opennth='1'] {
+    grid-template-columns:
+      calc(100% - 3 * $column-close-w)
+      $column-close-w
+      $column-close-w
+      $column-close-w;
+  }
+  &[data-opennth='2'] {
+    grid-template-columns:
+      $column-close-w
+      calc(100% - 3 * $column-close-w)
+      $column-close-w
+      $column-close-w;
+  }
+  &[data-opennth='3'] {
+    grid-template-columns:
+      $column-close-w
+      $column-close-w
+      calc(100% - 3 * $column-close-w)
+      $column-close-w;
+  }
+  &[data-opennth='4'] {
+    grid-template-columns:
+      $column-close-w
+      $column-close-w
+      $column-close-w
+      calc(100% - 3 * $column-close-w);
+  }
+
+  &__column {
+    &:nth-of-type(1) {
+      background-color: $col-white;
+
+      .content {
+        opacity: 0;
+        transition: opacity 100ms 0ms;
+      }
+
+      @at-root .grid[data-opennth='1'] & .content {
+        opacity: 1;
+
+        transition: opacity 150ms 500ms;
+      }
+    }
+  }
+
+  &__column {
+    &:nth-of-type(1) {
+      background-color: $col-white;
+    }
+
+    &:nth-of-type(2) {
+      background-color: $col-blue;
+    }
+
+    &:nth-of-type(3) {
+      background-color: $col-red;
+    }
+
+    &:nth-of-type(4) {
+      background-color: $col-yellow;
+    }
+  }
+}
+
+.section {
+  padding-inline: 3.75rem;
+
+  &--width-full {
+    padding-inline: 0;
+  }
+}
+
+.wrapper {
+}
+
+#grid {
+  display: grid;
+  grid-template-rows: 100vh auto;
+
+  @for $a from 1 through $column-num {
+    &[data-selected-nth='#{$a}'] {
+      $val: ();
+      @for $b from 1 through $column-num {
+        @if $a == $b {
+          $val: list.append(
+            $val,
+            calc(100% - ($column-num - 1) * $column-close-w)
+          );
+        } @else {
+          $val: list.append($val, $column-close-w);
+        }
+      }
+      grid-template-columns: $val;
+    }
+  }
+  // grid-template-columns: repeat(4, minmax(0, 1fr));
+  // 그리드의 각각의 네 칸의 사이즈가 무조건 같게 됨, 화면이 축소되면 비례가 1:1:1로 줄어듦, 0까지 줄어들 수 ㅇ
+}
+
+.column {
+  display: grid;
+  grid-template-rows: subgrid;
+  // subgrid : 부모가 쳐놨던 그리드를 계승함
+  grid-row: 1 / -1;
+  // 첫번째: 어디서부터 시작할지, 두번쨰: 어디서 끝날건지
+  // 명시적으로 몇칸인지 모를 때 -1를 주로 사용. 맨 끝에 있는 숫자는 -1
+
+  &:nth-of-type(1) {
+    background-color: $col-white;
+  }
+  &:nth-of-type(2) {
+    background-color: $col-blue;
+  }
+  &:nth-of-type(3) {
+    background-color: $col-red;
+  }
+  &:nth-of-type(4) {
+    background-color: $col-yellow;
+  }
+  // 각각이 1,2,3,4 컬럼을 뜻함
+  // nth는 class를 따지지 않고, :nth-child() -> child기준으로 순서를 따짐
+  // :nth-of-type() 컬럼이면서 순서를 따짐
+}
